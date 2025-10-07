@@ -55,6 +55,7 @@
         }
     </style>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 
@@ -86,7 +87,14 @@
             <label for="route-long">Longitude:</label>
             <input class="form-control" type="text" id="route-long" name="route-long">
         </div>
-        <button id="save-button" class="btn btn-primary btn-block">Simpan Perubahan</button>
+        <div class="d-grid gap-2 d-md-flex">
+            <a href="/satelit" class="btn btn-secondary btn-sm mr-2" type="button" id="small-button">
+                <i class="fas fa-satellite fa-xl"></i>
+            </a>
+            <button id="save-button" class="btn btn-primary btn-block" type="button">
+                Simpan Perubahan
+            </button>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -105,7 +113,7 @@
         const defaultStyle = {
             weight: 2,
             opacity: 2,
-            color: 'blue',
+            color: '#007bff',
             dashArray: '',
             fillOpacity: 0
         }
@@ -113,7 +121,7 @@
         const highlightStyle = {
             weight: 2,
             opacity: 2,
-            color: 'red',
+            color: '#ff0000',
             dashArray: '',
             fillOpacity: 0
         };
@@ -211,45 +219,43 @@
                     const longitude = parseFloat(infoLong.value); // longitude input
                     const ID = infoID.value; // luas area input
 
-                    // Cari elemen GeoJSON yang sesuai berdasarkan ID
-                    geojsonData.features.forEach((feature) => {
-                        if (feature.properties.no_persil === ID) {
-                            // Perbarui data pada GeoJSON
-                            feature.properties.area_in_me = parseFloat(luasArea); // Memperbarui luas area
-                            feature.properties.latitude = latitude; // Memperbarui latitude
-                            feature.properties.longitude = longitude; // Memperbarui longitude
-
-                            // Tampilkan data yang diperbarui
-                            console.log('Updated Feature:', feature);
-                        }
-                    });
-
-                    console.log(geojsonData);
-
-
-                    // Kirimkan data yang sudah diperbarui ke server Laravel untuk disimpan ulang
-                    fetch('/save-updated-geojson', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token Laravel
-                            },
-                            body: JSON.stringify(geojsonData) // Mengirim data yang sudah diperbarui
-                        })
-                        .then(response => response.json())
-                        .then(result => {
-                            console.log('Data berhasil diperbarui di server:', result);
-                            alert('Data berhasil diperbarui!');
-                        })
-                        .catch(error => {
-                            console.error('Terjadi kesalahan saat mengirim data:', error);
-                            alert('Gagal memperbarui data!');
+                    // Cek apakah semua input sudah terisi
+                    if (luasArea && !isNaN(latitude) && !isNaN(longitude) && ID) {
+                        // Cari elemen GeoJSON yang sesuai berdasarkan ID
+                        geojsonData.features.forEach((feature) => {
+                            if (feature.properties.no_persil === ID) {
+                                // Perbarui data pada GeoJSON
+                                feature.properties.area_in_me = parseFloat(luasArea); // Memperbarui luas area
+                                feature.properties.latitude = latitude; // Memperbarui latitude
+                                feature.properties.longitude = longitude; // Memperbarui longitude
+                            }
                         });
+
+
+                        // Kirimkan data yang sudah diperbarui ke server Laravel untuk disimpan ulang
+                        fetch('/save-updated-geojson', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token Laravel
+                                },
+                                body: JSON.stringify(geojsonData) // Mengirim data yang sudah diperbarui
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                alert('Data berhasil diperbarui!');
+                            })
+                            .catch(error => {
+                                alert('Gagal memperbarui data!');
+                            });
+                    } else {
+                        // Jika ada input kosong atau tidak valid, tampilkan alert
+                        alert('Mohon memilih data land terlebih dahulu.');
+                    }
                 });
 
             })
             .catch(error => {
-                console.error('Error fetching or parsing GeoJSON:', error);
                 alert('Gagal memuat data GeoJSON. Cek console untuk detail error.');
             });
     </script>

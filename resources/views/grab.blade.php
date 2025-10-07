@@ -65,27 +65,6 @@
             /* Menambahkan scroll jika isi sidebar melebihi tinggi */
         }
 
-        .sidebar input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
-
-        .sidebar button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .sidebar button:hover {
-            background-color: #0056b3;
-        }
-
         #results,
         #routing-info {
             margin-top: 15px;
@@ -189,16 +168,25 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="route-lat">Latitude:</label>
                     <input class="form-control" type="text" id="route-lat" name="route-lat">
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label for="route-long">Longitude:</label>
                     <input class="form-control" type="text" id="route-long" name="route-long" readonly>
                 </div>
-                <button id="save-button">Simpan Perubahan</button>
+
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="/" class="btn btn-secondary btn-sm me-2" type="button" id="small-button">
+                        <i class="fas fa-map"></i> <!-- Ikon -->
+                    </a>
+                    <button class="btn btn-primary w-100" type="button" id="save-button">
+                        Simpan Perubahan
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -370,40 +358,40 @@
                         const longitude = parseFloat(infoLong.value); // longitude input
                         const ID = infoID.value; // luas area input
 
-                        // Cari elemen GeoJSON yang sesuai berdasarkan ID
-                        geojsonData.features.forEach((feature) => {
-                            if (feature.properties.no_persil === ID) {
-                                // Perbarui data pada GeoJSON
-                                feature.properties.area_in_me = parseFloat(luasArea); // Memperbarui luas area
-                                feature.properties.latitude = latitude; // Memperbarui latitude
-                                feature.properties.longitude = longitude; // Memperbarui longitude
-
-                                // Tampilkan data yang diperbarui
-                                console.log('Updated Feature:', feature);
-                            }
-                        });
-
-                        console.log(geojsonData);
-
-
-                        // Kirimkan data yang sudah diperbarui ke server Laravel untuk disimpan ulang
-                        fetch('/save-updated-geojson', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token Laravel
-                                },
-                                body: JSON.stringify(geojsonData) // Mengirim data yang sudah diperbarui
-                            })
-                            .then(response => response.json())
-                            .then(result => {
-                                console.log('Data berhasil diperbarui di server:', result);
-                                alert('Data berhasil diperbarui!');
-                            })
-                            .catch(error => {
-                                console.error('Terjadi kesalahan saat mengirim data:', error);
-                                alert('Gagal memperbarui data!');
+                        // Cek apakah semua input sudah terisi
+                        if (luasArea && !isNaN(latitude) && !isNaN(longitude) && ID) {
+                            // Cari elemen GeoJSON yang sesuai berdasarkan ID
+                            geojsonData.features.forEach((feature) => {
+                                if (feature.properties.no_persil === ID) {
+                                    // Perbarui data pada GeoJSON
+                                    feature.properties.area_in_me = parseFloat(luasArea); // Memperbarui luas area
+                                    feature.properties.latitude = latitude; // Memperbarui latitude
+                                    feature.properties.longitude = longitude; // Memperbarui longitude
+                                }
                             });
+
+                            // Kirimkan data yang sudah diperbarui ke server Laravel untuk disimpan ulang
+                            fetch('/save-updated-geojson', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token Laravel
+                                    },
+                                    body: JSON.stringify(geojsonData) // Mengirim data yang sudah diperbarui
+                                })
+                                .then(response => response.json())
+                                .then(result => {
+                                    console.log('Data berhasil diperbarui di server:', result);
+                                    alert('Data berhasil diperbarui!');
+                                })
+                                .catch(error => {
+                                    console.error('Terjadi kesalahan saat mengirim data:', error);
+                                    alert('Gagal memperbarui data!');
+                                });
+                        } else {
+                            // Jika ada input kosong atau tidak valid, tampilkan alert
+                            alert('Mohon memilih data land terlebih dahulu.');
+                        }
                     });
 
                 })

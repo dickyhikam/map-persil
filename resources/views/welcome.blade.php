@@ -96,6 +96,8 @@
 
         // variable layer untuk maps
         const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxNativeZoom: 19, // OSM max available zoom is at 19.
+            maxZoom: 22, // Match the map maxZoom, or leave map.options.maxZoom undefined.
             attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
         const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {

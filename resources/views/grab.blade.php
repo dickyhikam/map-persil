@@ -257,7 +257,7 @@
                         const firstCoords = [firstFeature.properties.longitude, firstFeature.properties.latitude];
                         if (firstCoords[0] && firstCoords[1]) {
                             map.setCenter(firstCoords);
-                            map.setZoom(18);
+                            map.setZoom(16);
                         } else {
                             map.setCenter([115.8553, -5.1687]);
                             map.setZoom(16);

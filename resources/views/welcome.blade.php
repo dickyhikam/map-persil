@@ -178,10 +178,10 @@
                     //mengambil array pertama dari data geojson
                     const firstFeature = data.features[0];
                     const firstCoords = [firstFeature.properties.latitude, firstFeature.properties.longitude];
-                    map.setView(firstCoords, 18);
+                    map.setView(firstCoords, 16);
                 } else {
                     //koordinat default ketika geojson kosong
-                    map.setView([-7.2575, 112.7521], 12);
+                    map.setView([-7.2575, 112.7521], 16);
                     alert('GeoJSON is empty, setting to default view.');
                 }
 

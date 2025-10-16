@@ -13,7 +13,7 @@ class GeoJsonController extends Controller
         $updatedGeoJsonData = $request->input();
 
         // Tentukan path file GeoJSON yang ada di folder public
-        $filePath = public_path('contoh-persil-2.geojson');
+        $filePath = public_path('LAMIPAK-BPN-PERSIL.geojson');
 
         // Periksa apakah file ada
         if (!File::exists($filePath)) {

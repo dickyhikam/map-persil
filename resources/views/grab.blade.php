@@ -66,27 +66,27 @@
                 </div>
                 <div class="form-group mb-3">
                     <label for="land-status">Land Status:</label>
-                    <input class="form-control" type="text" id="land-status" name="land-status" readonly placeholder="SHM/HGB/Girik, etc">
+                    <input class="form-control" type="text" id="land-status" name="land-status" placeholder="SHM/HGB/Girik, etc">
                 </div>
                 <div class="form-group mb-3">
                     <label for="actual-condition">Actual Condition (Photo):</label>
                     <div class="d-flex align-items-center">
-                        <input class="form-control" type="text" id="actual-condition" name="actual-condition" readonly placeholder="View photo" readonly>
+                        <input class="form-control" type="text" id="actual-condition" name="actual-condition" placeholder="View photo">
                         <button type="button" id="viewPhotoBtn" class="btn btn-link ml-2">View</button>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <label for="current-owner">Current Owner:</label>
-                    <input class="form-control" type="text" id="current-owner" name="current-owner" readonly>
+                    <input class="form-control" type="text" id="current-owner" name="current-owner">
                 </div>
                 <div class="form-group mb-3">
                     <label for="previous-owner">Previous Owner:</label>
-                    <input class="form-control" type="text" id="previous-owner" name="previous-owner" readonly>
+                    <input class="form-control" type="text" id="previous-owner" name="previous-owner">
                 </div>
                 <div class="form-group mb-3">
                     <label for="area-size" class="form-label">Area Size:</label>
                     <div class="input-group">
-                        <input class="form-control" id="area-size" name="area-size" readonly>
+                        <input class="form-control" id="area-size" name="area-size">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">m²</span>
                         </div>
@@ -95,7 +95,7 @@
                 <div class="form-group mb-3">
                     <label for="potential-issue">Potential Issue (Document):</label>
                     <div class="d-flex align-items-center">
-                        <input class="form-control" type="text" id="potential-issue" name="potential-issue" readonly placeholder="Download document" readonly>
+                        <input class="form-control" type="text" id="potential-issue" name="potential-issue" placeholder="Download document">
                         <button type="button" id="downloadIssueBtn" class="btn btn-link ml-2">View</button>
                     </div>
                 </div>
@@ -103,7 +103,7 @@
                 <div class="form-group mb-3">
                     <label for="land-history">Land History (Document):</label>
                     <div class="d-flex align-items-center">
-                        <input class="form-control" type="text" id="land-history" name="land-history" readonly placeholder="Download document" readonly>
+                        <input class="form-control" type="text" id="land-history" name="land-history" placeholder="Download document">
                         <button type="button" id="downloadHistoryBtn" class="btn btn-link ml-2">View</button>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                         <i class="fas fa-map"></i>
                     </a> -->
                     <button class="btn btn-gradient w-100 py-2 text-white" type="button" id="save-button">
-                        Simpan Perubahan
+                        Save Change
                     </button>
                 </div>
 
@@ -242,14 +242,24 @@
                             map.setCenter(firstCoords);
                             map.setZoom(15);
                         } else {
-                            map.setCenter([115.8553, -5.1687]);
-                            map.setZoom(15);
-                            alert('GeoJSON memiliki koordinat tidak valid, menggunakan tampilan default.');
+                            map.setCenter([106.8203, -6.9754]);
+                            map.setZoom(16);
+
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'GeoJSON Data is Empty',
+                                text: 'The GeoJSON data is empty. Default view has been applied to Istana Presiden.',
+                            });
                         }
                     } else {
-                        map.setCenter([115.8553, -5.1687]);
+                        map.setCenter([106.8203, -6.9754]);
                         map.setZoom(16);
-                        alert('GeoJSON kosong, menggunakan tampilan default.');
+
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'GeoJSON Data is Empty',
+                            text: 'The GeoJSON data is empty. Default view has been applied to Istana Presiden.',
+                        });
                     }
 
                     map.on('load', function() {
@@ -361,20 +371,28 @@
                     // Fungsi untuk memperbarui GeoJSON berdasarkan input
                     saveButton.addEventListener('click', () => {
                         // Ambil data dari input
-                        const luasArea = infoLuasArea.value; // luas area input
-                        const latitude = parseFloat(infoLat.value); // latitude input
-                        const longitude = parseFloat(infoLong.value); // longitude input
+                        const landStatusValue = landStatus.value;
+                        const actualConditionValue = actualCondition.value;
+                        const currentOwnerValue = currentOwner.value;
+                        const previousOwnerValue = previousOwner.value;
+                        const areaSizeValue = parseFloat(areaSize.value); // Assuming it's in square meters
+                        const potentialIssueValue = potentialIssue.value;
+                        const landHistoryValue = landHistory.value;
                         const ID = infoID.value; // luas area input
 
                         // Cek apakah semua input sudah terisi
-                        if (luasArea && !isNaN(latitude) && !isNaN(longitude) && ID) {
+                        if (landStatusValue && actualConditionValue && currentOwnerValue && previousOwnerValue && !isNaN(areaSizeValue) && potentialIssueValue && landHistoryValue && ID) {
                             // Cari elemen GeoJSON yang sesuai berdasarkan ID
                             geojsonData.features.forEach((feature) => {
                                 if (feature.properties.Sert_No === ID) {
                                     // Perbarui data pada GeoJSON
-                                    feature.properties.land_size = parseFloat(luasArea); // Memperbarui luas area
-                                    feature.properties.latitude = latitude; // Memperbarui latitude
-                                    feature.properties.longitude = longitude; // Memperbarui longitude
+                                    feature.properties.st_tanah = landStatusValue;
+                                    feature.properties.actual_con = actualConditionValue;
+                                    feature.properties.cur_owner = currentOwnerValue;
+                                    feature.properties.prv_owner = previousOwnerValue;
+                                    feature.properties.land_size = areaSizeValue;
+                                    feature.properties.Issue = potentialIssueValue;
+                                    feature.properties.history = landHistoryValue;
                                 }
                             });
 
@@ -390,22 +408,44 @@
                                 .then(response => response.json())
                                 .then(result => {
                                     console.log('Data berhasil diperbarui di server:', result);
-                                    alert('Data berhasil diperbarui!');
+
+                                    // SweetAlert success message
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Data successfully updated!',
+                                        text: 'Your data has been successfully saved to the server.',
+                                    });
                                 })
                                 .catch(error => {
                                     console.error('Terjadi kesalahan saat mengirim data:', error);
-                                    alert('Gagal memperbarui data!');
+
+                                    // SweetAlert error message
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Failed to update data! Please try again.',
+                                    });
                                 });
                         } else {
                             // Jika ada input kosong atau tidak valid, tampilkan alert
-                            alert('Mohon memilih data land terlebih dahulu.');
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Missing Information',
+                                text: 'Please fill in all the fields before saving.',
+                            });
                         }
                     });
 
                 })
                 .catch(error => {
                     console.error('Error fetching or parsing GeoJSON:', error);
-                    alert('Gagal memuat data GeoJSON. Cek console untuk detail error.');
+
+                    // SweetAlert error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed to load GeoJSON data',
+                        text: 'An error occurred while fetching or parsing the data. Please check the console for details.',
+                    });
                 });
         }
     </script>

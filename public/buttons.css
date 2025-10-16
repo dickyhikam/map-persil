@@ -1,0 +1,145 @@
+/* =========================
+.btnx[disabled], .btnx.is-loading{ opacity:.7; cursor:not-allowed; }
+
+
+/* Ikon di tombol */
+.btnx > .icon {
+    display: inline-grid;
+    place-items: center;
+    width: 1.1em;
+    height: 1.1em;
+}
+
+/* Variants */
+.btnx-brand {
+    --_bg: var(--brand-1);
+}
+.btnx-brand:hover {
+    filter: brightness(0.95);
+}
+
+.btnx-gradient {
+    background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    border: none;
+}
+.btnx-gradient:hover {
+    filter: brightness(0.95);
+}
+
+.btnx-outline {
+    --_bg: transparent;
+    --_fg: var(--brand-1);
+    --_bd: var(--brand-1);
+    box-shadow: none;
+}
+.btnx-outline:hover {
+    background: rgba(11, 58, 130, 0.08);
+}
+
+.btnx-soft {
+    --_bg: rgba(0, 194, 255, 0.12);
+    --_fg: var(--brand-1);
+    --_bd: rgba(0, 194, 255, 0.3);
+    box-shadow: none;
+}
+.btnx-soft:hover {
+    --_bg: rgba(0, 194, 255, 0.18);
+}
+
+.btnx-ghost {
+    --_bg: transparent;
+    --_fg: var(--brand-1);
+    --_bd: transparent;
+    box-shadow: none;
+}
+.btnx-ghost:hover {
+    background: rgba(11, 58, 130, 0.08);
+}
+
+.btnx-neutral {
+    --_bg: #e5e7eb;
+    --_fg: #111827;
+    --_bd: #e5e7eb;
+    box-shadow: none;
+}
+.btnx-neutral:hover {
+    filter: brightness(0.96);
+}
+
+.btnx-success {
+    --_bg: var(--success);
+}
+.btnx-danger {
+    --_bg: var(--danger);
+}
+.btnx-warning {
+    --_bg: var(--warning);
+    --_fg: #111827;
+}
+.btnx-info {
+    --_bg: var(--info);
+}
+.btnx-dark {
+    --_bg: var(--dark);
+}
+.btnx-light {
+    --_bg: var(--light);
+    --_fg: #111827;
+    --_bd: #e5e7eb;
+    box-shadow: none;
+}
+
+/* Shapes */
+.btnx-pill {
+    border-radius: 999px;
+}
+.btnx-sm {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.9rem;
+}
+.btnx-lg {
+    padding: 0.8rem 1.15rem;
+    font-size: 1.05rem;
+}
+
+/* Icon-only */
+.btnx-icon {
+    padding: 0.55rem;
+    width: 2.4rem;
+    height: 2.4rem;
+}
+
+/* Loading state (inline spinner) */
+.btnx.is-loading {
+    position: relative;
+}
+.btnx.is-loading::after {
+    content: "";
+    position: absolute;
+    right: 0.9rem;
+    width: 1rem;
+    height: 1rem;
+    border: 0.18rem solid rgba(255, 255, 255, 0.6);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Link-style */
+.btnx-link {
+    --_bg: transparent;
+    --_fg: var(--brand-1);
+    --_bd: transparent;
+    box-shadow: none;
+    padding: 0;
+    font-weight: 600;
+}
+.btnx-link:hover {
+    color: var(--brand-2);
+    text-decoration: underline;
+}

@@ -140,3 +140,22 @@ body {
         left: 10px;
     }
 }
+
+/* Custom styling for read-only inputs */
+input[readonly],
+textarea[readonly],
+select[readonly] {
+    background-color: #e9ecef; /* Light gray background */
+    border-color: #ced4da; /* Matching border with the Bootstrap form-control */
+    color: #495057; /* Darker text color */
+    cursor: not-allowed; /* Indicating the field is not editable */
+    pointer-events: none; /* Disables mouse events, preventing clicks/focus */
+}
+
+/* Optional: Remove focus box-shadow on read-only inputs */
+input[readonly]:focus,
+textarea[readonly]:focus,
+select[readonly]:focus {
+    box-shadow: none; /* Remove the blue outline or shadow effect */
+    border-color: #ced4da; /* Keep the border color consistent */
+}

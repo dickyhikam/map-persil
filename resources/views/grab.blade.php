@@ -46,7 +46,7 @@
 
     <!-- ====== SIDEBAR ====== -->
     <div class="sidebar-view">
-        <div class="sidebar">
+        <div class="sidebar" id="page_info" style="display: none;">
             <div class="row" hidden>
                 <div class="col-6">
                     <button class="btn btn-outline-primary w-100" id="satelliteBtn" onclick="satelliteBtn()" style="padding: 20px;">
@@ -66,27 +66,27 @@
                 </div>
                 <div class="form-group mb-3">
                     <label for="land-status">Land Status:</label>
-                    <input class="form-control" type="text" id="land-status" name="land-status" placeholder="SHM/HGB/Girik, etc">
+                    <input class="form-control" type="text" id="land-status" name="land-status" placeholder="SHM/HGB/Girik, etc" readonly>
                 </div>
                 <div class="form-group mb-3">
                     <label for="actual-condition">Actual Condition (Photo):</label>
                     <div class="d-flex align-items-center">
-                        <input class="form-control" type="text" id="actual-condition" name="actual-condition" placeholder="View photo">
+                        <input class="form-control" type="text" id="actual-condition" name="actual-condition" placeholder="View photo" readonly>
                         <button type="button" id="viewPhotoBtn" class="btn btn-link ml-2">View</button>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <label for="current-owner">Current Owner:</label>
-                    <input class="form-control" type="text" id="current-owner" name="current-owner">
+                    <input class="form-control" type="text" id="current-owner" name="current-owner" readonly>
                 </div>
                 <div class="form-group mb-3">
                     <label for="previous-owner">Previous Owner:</label>
-                    <input class="form-control" type="text" id="previous-owner" name="previous-owner">
+                    <input class="form-control" type="text" id="previous-owner" name="previous-owner" readonly>
                 </div>
                 <div class="form-group mb-3">
                     <label for="area-size" class="form-label">Area Size:</label>
                     <div class="input-group">
-                        <input class="form-control" id="area-size" name="area-size">
+                        <input class="form-control" id="area-size" name="area-size" readonly>
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">m²</span>
                         </div>
@@ -95,7 +95,7 @@
                 <div class="form-group mb-3">
                     <label for="potential-issue">Potential Issue (Document):</label>
                     <div class="d-flex align-items-center">
-                        <input class="form-control" type="text" id="potential-issue" name="potential-issue" placeholder="Download document">
+                        <input class="form-control" type="text" id="potential-issue" name="potential-issue" placeholder="Download document" readonly>
                         <button type="button" id="downloadIssueBtn" class="btn btn-link ml-2">View</button>
                     </div>
                 </div>
@@ -103,18 +103,15 @@
                 <div class="form-group mb-3">
                     <label for="land-history">Land History (Document):</label>
                     <div class="d-flex align-items-center">
-                        <input class="form-control" type="text" id="land-history" name="land-history" placeholder="Download document">
+                        <input class="form-control" type="text" id="land-history" name="land-history" placeholder="Download document" readonly>
                         <button type="button" id="downloadHistoryBtn" class="btn btn-link ml-2">View</button>
                     </div>
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex">
-                    <!-- <a href="/" class="btn btn-secondary btn-sm me-2" type="button" id="small-button">
-                        <i class="fas fa-map"></i>
-                    </a> -->
-                    <button class="btn btn-gradient w-100 py-2 text-white" type="button" id="save-button">
-                        Save Change
-                    </button>
+                    <button id="close-sidebar-btn" class="btn btn-danger">Close</button>
+                    <button id="edit-btn" class="btn btn-warning w-100" type="button">Edit</button>
+                    <button class="btn btn-gradient w-100 py-2 text-white" type="button" id="save-button" style="display: none;">Save Change</button>
                 </div>
 
             </div>
@@ -177,6 +174,39 @@
             window.location.href = "{{ route('pageAuth') }}";
         });
 
+        document.getElementById('edit-btn').addEventListener('click', () => {
+            removeReadOnly();
+        });
+
+        function removeReadOnly() {
+            // Enable editing: remove readonly attributes
+            document.getElementById('land-status').removeAttribute('readonly');
+            document.getElementById('actual-condition').removeAttribute('readonly');
+            document.getElementById('current-owner').removeAttribute('readonly');
+            document.getElementById('previous-owner').removeAttribute('readonly');
+            document.getElementById('area-size').removeAttribute('readonly');
+            document.getElementById('potential-issue').removeAttribute('readonly');
+            document.getElementById('land-history').removeAttribute('readonly');
+
+            // Change the 'Edit' button to 'Save Change'
+            document.getElementById('edit-btn').style.display = 'none';
+            document.getElementById('save-button').style.display = 'block';
+        }
+
+        function addReadOnly() {
+            // After saving, make fields read-only again
+            document.getElementById('land-status').setAttribute('readonly', 'true');
+            document.getElementById('actual-condition').setAttribute('readonly', 'true');
+            document.getElementById('current-owner').setAttribute('readonly', 'true');
+            document.getElementById('previous-owner').setAttribute('readonly', 'true');
+            document.getElementById('area-size').setAttribute('readonly', 'true');
+            document.getElementById('potential-issue').setAttribute('readonly', 'true');
+            document.getElementById('land-history').setAttribute('readonly', 'true');
+
+            // Hide 'Save Change' and show 'Edit' again
+            document.getElementById('save-button').style.display = 'none';
+            document.getElementById('edit-btn').style.display = 'block';
+        }
 
         // Ambil data konfigurasi dari Blade Laravel
         const region = "{{ env('AWS_REGION') }}";
@@ -192,24 +222,11 @@
         const landHistory = document.getElementById('land-history');
         const infoID = document.getElementById('route-id');
         const saveButton = document.getElementById('save-button');
+        const pageInfo = document.getElementById('page_info');
 
         $(document).ready(function() {
             mapsAWS();
         });
-
-        // Fungsi untuk menampilkan peta AWS dan menyembunyikan peta OSM
-        function satelliteBtn() {
-            $('#map').show(); // Menampilkan peta AWS
-            $('#map_osm').hide(); // Menyembunyikan peta OSM
-
-            mapsAWS()
-        }
-
-        // Fungsi untuk menampilkan peta OSM dan menyembunyikan peta AWS
-        function streetBtn() {
-            $('#map').hide(); // Menyembunyikan peta AWS
-            $('#map_osm').show(); // Menampilkan peta OSM
-        }
 
         function mapsAWS() {
             const mapStyle = `https://maps.geo.${region}.amazonaws.com/maps/v0/maps/${mapName}/style-descriptor?key=${apiKey}`;
@@ -292,7 +309,7 @@
                             type: 'line',
                             source: 'geojson-source',
                             paint: {
-                                'line-color': '#007bff',
+                                'line-color': '#ffff00ff',
                                 'line-width': 3,
                                 // 'line-join': 'round',
                                 // 'line-cap': 'round'
@@ -324,6 +341,7 @@
 
                         // Klik pada fitur (fill)
                         map.on('click', 'geojson-fill-layer', (e) => {
+                            addReadOnly();
                             if (!e.features.length) return;
 
                             const clickedFeatureId = e.features[0].properties.Sert_No; // hasil dari promoteId
@@ -336,8 +354,8 @@
                                 clickedFeatureId
                             ]);
                             highlightedFeatureId = clickedFeatureId;
-                            console.log(properties);
 
+                            pageInfo.style.display = 'block'; // Show the sidebar
 
                             // Tampilkan info (pastikan elemen input ini ada di DOM)
                             if (typeof areaSize !== 'undefined') {
@@ -352,6 +370,7 @@
                             if (typeof landHistory !== 'undefined') landHistory.value = properties.history ?? '';
 
                             if (typeof infoID !== 'undefined') infoID.value = highlightedFeatureId;
+
                         });
 
                         // Klik area kosong peta → hapus highlight
@@ -363,9 +382,23 @@
                             if (!feats.length) {
                                 map.setFilter('geojson-line-highlight', ['==', ['id'], -1]); // kosong
                                 highlightedFeatureId = null;
+
+                                pageInfo.style.display = 'none';
                             }
                         });
                     });
+
+                    document.getElementById('close-sidebar-btn').addEventListener('click', () => {
+                        const pageInfo = document.getElementById('page_info');
+                        pageInfo.style.display = 'none'; // Hide the sidebar
+
+                        // Reset the highlight filter on the map
+                        map.setFilter('geojson-line-highlight', ['==', ['get', 'Sert_No'], '']); // Remove highlight from the map
+
+                        // Optionally, reset any highlightedFeatureId or other related variables
+                        highlightedFeatureId = null; // Reset the highlighted feature ID
+                    });
+
 
                     // menyimpan data terbaru
                     // Fungsi untuk memperbarui GeoJSON berdasarkan input
@@ -407,6 +440,7 @@
                                 })
                                 .then(response => response.json())
                                 .then(result => {
+                                    addReadOnly()
                                     console.log('Data berhasil diperbarui di server:', result);
 
                                     // SweetAlert success message
@@ -417,6 +451,7 @@
                                     });
                                 })
                                 .catch(error => {
+                                    addReadOnly()
                                     console.error('Terjadi kesalahan saat mengirim data:', error);
 
                                     // SweetAlert error message
